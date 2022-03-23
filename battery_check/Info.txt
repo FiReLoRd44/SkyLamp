@@ -1,0 +1,3 @@
+youtube link: https://www.youtube.com/watch?v=lec7kPv3VS8
+
+discussion link: https://forum.arduino.cc/t/battery-level-check-using-arduino/424054/6
