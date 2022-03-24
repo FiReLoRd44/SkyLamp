@@ -9,8 +9,10 @@ const byte dhtPin = 4;
 #define ECHO_PIN     11
 #define LED 2
 #define MAX_DISTANCE 200
-long duration, distance, c;
+float duration, distance, c;
+int iterations = 5;
 int light;
+int humidity;
 
 DHT dht(dhtPin, DHTTYPE);
 
@@ -33,51 +35,58 @@ void loop()
   //printing the analog values on the serial monitor
   Serial.println(light);
   //Checking day and night
-  if (light > 250)
+  if (light > 150)
   {
     Serial.println("Day");
   }
   else
   {
     Serial.println("Night");
-    Serial.println("Distance is:"  );
-    Serial.println(sonar.ping_cm());
-    delay(500);
+    Serial.println("Distance is:");
+    Serial.println(sonar.ping_cm()); 
 
-    duration = pulseIn(ECHO_PIN, HIGH);
-
+    //duration = pulseIn(11, HIGH);
+    duration = sonar.ping();
+    Serial.println("Duration = ");
+    Serial.print(duration);
+   
     //get the temp in celcius (default)
-    Serial.println("Temp  = ");
     temp = dht.readTemperature();
-    Serial.println(temp);
-    Serial.println(" Deg C  ");
-    Serial.println("Temp  = ");
+    humidity = dht.readHumidity();
   
     //calculate the speed of sound based on value from temp sensor
-    c = 331.3 + temp * 0.606;
-    
+    c = 331.4 + temp * 0.606 + humidity * 0.0124;
+    c = c * 100 * 0.000001;
     //calculate the distance from duration and speed of sound
-    distance = c * duration;
+    distance = c * (duration/2) ;
   
-    Serial.println("Temperature = ");
+    Serial.println("\nTemperature = ");
     Serial.print(temp);
-    Serial.println("Speed of sound = ");
+    Serial.print(" Deg C  ");
+
+    Serial.println("\nHumidity = ");
+    Serial.print(humidity);
+    
+    Serial.println("\nSpeed of sound = ");
     Serial.print(c);
-    Serial.println("Distance = ");
+    
+    Serial.println("\nDistance = ");
     Serial.print(distance);
-    delay(2000);
+    
     //Turn on the light if distance is less than 20 cm if greater than that keep it off. 
-    if (distance < 20)
+    if (distance < 4)
     { 
       digitalWrite(LED,HIGH);
+      Serial.println("\n LED on");
     }
   
     else 
     {
       digitalWrite(LED,LOW);
+      Serial.println("\n LED off");
     }
   }
   
-
+delay(2000);
   
 }
