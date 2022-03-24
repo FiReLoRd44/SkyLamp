@@ -13,7 +13,7 @@ void loop() {
   //printing the analog values on the serial monitor
   Serial.println(light);
   //Checking day and night
-  if (light > 300)
+  if (light > 250)
   {
     Serial.println("Day");
   }
@@ -21,5 +21,5 @@ void loop() {
   {
     Serial.println("Night");
   }
-  delay(100);
+  delay(1000);
 }
