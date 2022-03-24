@@ -51,4 +51,16 @@ Serial.println(sonar.ping_cm());
   Serial.println("Distance = ");
   Serial.print(distance);
   delay(2000);
+
+if (distance < 20)
+
+{ digitalWrite(led,HIGH);
+
+}
+
+else {
+
+digitalWrite(led,LOW);
+
+}
  }
