@@ -30,7 +30,20 @@ void setup()
 
 void loop() 
 {
- //reading the analog value from pin A0
+  //Reading the voltage of battery 
+  counts = analogRead(A1);
+  Serial.println(counts);
+  //Calculating the accurate voltage
+  mv = counts * 4.63 / 1023;
+  //Mapping the voltage to accurate battery percentage
+  perc = mapb(mv, 3.6, 4.2, 0, 100);
+  Serial.print("Voltage= ");
+  Serial.println(mv);
+  Serial.print("Battery level= ");
+  Serial.print(perc);
+  Serial.println(" %");
+  
+  //reading the analog value from pin A0
   light = analogRead(A0);
   //printing the analog values on the serial monitor
   Serial.println(light);
