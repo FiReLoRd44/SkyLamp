@@ -13,7 +13,7 @@ float duration, distance, c;
 int iterations = 5;
 int light;
 int humidity;
-
+float counts, mv, perc;
 DHT dht(dhtPin, DHTTYPE);
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
@@ -85,21 +85,24 @@ void loop()
     
     Serial.println("\nDistance = ");
     Serial.print(distance);
-    
-    //Turn on the light if distance is less than 20 cm if greater than that keep it off. 
-    if (distance < 4)
-    { 
-      digitalWrite(LED,HIGH);
-      Serial.println("\n LED on");
-    }
+
+    //Turn on the light if distance is less than 4 cm and greater than 0 cm, if greater than that keep it off. 
+      if (distance > 0 && distance < 4)
+      { 
+        digitalWrite(LED,HIGH);
+        Serial.println("\n LED on");
+      }
   
-    else 
-    {
-      digitalWrite(LED,LOW);
-      Serial.println("\n LED off");
-    }
+      else 
+      {
+        digitalWrite(LED,LOW);
+        Serial.println("\n LED off");
+      }
+  
+    delay(2000);
   }
-  
-delay(2000);
-  
+}
+float mapb(float x, float in_min, float in_max, float out_min, float out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
