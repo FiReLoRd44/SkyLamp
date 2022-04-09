@@ -51,12 +51,13 @@ void loop()
   if (light > 150)
   {
     Serial.println("Day");
+    delay(500);
   }
   else
   {
     Serial.println("Night");
-    Serial.println("Distance is:");
-    Serial.println(sonar.ping_cm()); 
+    Serial.print("Distance is:");
+    Serial.print(sonar.ping_cm()); 
 
     //duration = pulseIn(11, HIGH);
     duration = sonar.ping();
