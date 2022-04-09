@@ -74,30 +74,30 @@ void loop()
     //calculate the distance from duration and speed of sound
     distance = c * (duration/2) ;
   
-    Serial.print("\nTemperature = ");
+    Serial.print("Temperature = ");
     Serial.print(temp);
     Serial.println(" Deg C  ");
 
-    Serial.print("\nHumidity = ");
+    Serial.print("Humidity = ");
     Serial.println(humidity);
     
-    Serial.print("\nSpeed of sound = ");
+    Serial.print("Speed of sound = ");
     Serial.println(c);
     
-    Serial.print("\nDistance = ");
+    Serial.print("Distance = ");
     Serial.println(distance);
 
     //Turn on the light if distance is less than 4 cm and greater than 0 cm, if greater than that keep it off. 
       if (distance > 0 && distance < 4)
       { 
         digitalWrite(LED,HIGH);
-        Serial.println("\n LED on");
+        Serial.println("LED on\n");
       }
   
       else 
       {
         digitalWrite(LED,LOW);
-        Serial.println("\n LED off");
+        Serial.println("LED off\n");
       }
   
     delay(2000);
