@@ -1,10 +1,10 @@
 #include <NewPing.h>
 #include "DHT.h"
 
-
+  
 int temp;
 const byte dhtPin = 4;
-#define DHTTYPE DHT11
+#define DHTTYPE DHT11  
 #define TRIGGER_PIN  10
 #define ECHO_PIN     11
 #define LED 2
@@ -51,18 +51,17 @@ void loop()
   if (light > 150)
   {
     Serial.println("Day");
-    delay(500);
   }
   else
   {
     Serial.println("Night");
-    Serial.print("Distance is:");
+    Serial.println("Distance is:");
     Serial.println(sonar.ping_cm()); 
 
     //duration = pulseIn(11, HIGH);
     duration = sonar.ping();
-    Serial.print("Duration = ");
-    Serial.println(duration);
+    Serial.println("Duration = ");
+    Serial.print(duration);
    
     //get the temp in celcius (default)
     temp = dht.readTemperature();
@@ -74,30 +73,30 @@ void loop()
     //calculate the distance from duration and speed of sound
     distance = c * (duration/2) ;
   
-    Serial.print("Temperature = ");
+    Serial.println("\nTemperature = ");
     Serial.print(temp);
-    Serial.println(" Deg C  ");
+    Serial.print(" Deg C  ");
 
-    Serial.print("Humidity = ");
-    Serial.println(humidity);
+    Serial.println("\nHumidity = ");
+    Serial.print(humidity);
     
-    Serial.print("Speed of sound = ");
-    Serial.println(c);
+    Serial.println("\nSpeed of sound = ");
+    Serial.print(c);
     
-    Serial.print("Distance = ");
-    Serial.println(distance);
+    Serial.println("\nDistance = ");
+    Serial.print(distance);
 
     //Turn on the light if distance is less than 4 cm and greater than 0 cm, if greater than that keep it off. 
       if (distance > 0 && distance < 4)
       { 
         digitalWrite(LED,HIGH);
-        Serial.println("LED on\n");
+        Serial.println("LED on");
       }
   
       else 
       {
         digitalWrite(LED,LOW);
-        Serial.println("LED off\n");
+        Serial.println("LED off");
       }
   
     delay(2000);
