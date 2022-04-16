@@ -21,6 +21,7 @@
  * 
  * NEW: LoRa communicain library moved from Libelium's lib to StuartProject's lib
  * https://github.com/StuartsProjects/SX12XX-LoRa
+ * to support SX126X, SX127X and SX128X chips (SX128X is LoRa in 2.4GHz band)
  * 
  * This version uses the same structure than the Arduino_LoRa_Demo_Sensor where
  * the sensor-related code is in a separate file
