@@ -51,17 +51,18 @@ void loop()
   if (light > 150)
   {
     Serial.println("Day");
+    delay(500);
   }
   else
   {
     Serial.println("Night");
-    Serial.println("Distance is:");
+    Serial.print("Distance is:");
     Serial.println(sonar.ping_cm()); 
 
     //duration = pulseIn(11, HIGH);
     duration = sonar.ping();
-    Serial.println("Duration = ");
-    Serial.print(duration);
+    Serial.print("Duration = ");
+    Serial.println(duration);
    
     //get the temp in celcius (default)
     temp = dht.readTemperature();
@@ -73,30 +74,30 @@ void loop()
     //calculate the distance from duration and speed of sound
     distance = c * (duration/2) ;
   
-    Serial.println("\nTemperature = ");
+    Serial.print("Temperature = ");
     Serial.print(temp);
-    Serial.print(" Deg C  ");
+    Serial.println(" Deg C  ");
 
-    Serial.println("\nHumidity = ");
-    Serial.print(humidity);
+    Serial.print("Humidity = ");
+    Serial.println(humidity);
     
-    Serial.println("\nSpeed of sound = ");
-    Serial.print(c);
+    Serial.print("Speed of sound = ");
+    Serial.println(c);
     
-    Serial.println("\nDistance = ");
-    Serial.print(distance);
+    Serial.print("Distance = ");
+    Serial.println(distance);
 
     //Turn on the light if distance is less than 4 cm and greater than 0 cm, if greater than that keep it off. 
       if (distance > 0 && distance < 4)
       { 
         digitalWrite(LED,HIGH);
-        Serial.println("\n LED on");
+        Serial.println("LED on\n");
       }
   
       else 
       {
         digitalWrite(LED,LOW);
-        Serial.println("\n LED off");
+        Serial.println("LED off\n");
       }
   
     delay(2000);
