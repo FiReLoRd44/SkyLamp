@@ -51,7 +51,24 @@
 #include <SX128XLT.h>                                          
 #include "SX128X_RadioSettings.h"
 #endif
-                                        
+
+#include <NewPing.h>
+#include "DHT.h"
+
+const byte dhtPin = 3;
+#define DHTTYPE DHT11  
+#define TRIGGER_PIN  7
+#define ECHO_PIN     6
+#define LED 2
+#define MAX_DISTANCE 200
+float duration, distance, c;
+int iterations = 5;
+int light;
+float counts, mv, perc;
+DHT dht(dhtPin, DHTTYPE);
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
 #include "my_temp_sensor_code.h"
 
 // http://patorjk.com/software/taag
@@ -112,7 +129,7 @@ unsigned int idlePeriodInMin = 1;
 
 ///////////////////////////////////////////////////////////////////
 // IF YOU SEND A LONG STRING, INCREASE THE SIZE OF MESSAGE
-uint8_t message[50];
+uint8_t message[100];
 ///////////////////////////////////////////////////////////////////
 
 //create a library class instance called LT
@@ -179,7 +196,7 @@ uint32_t TXPacketCount=0;
 // this is for the Teensy36, Teensy35, Teensy31/32 & TeensyLC
 // need v6 of Snooze library
 #if defined __MK20DX256__ || defined __MKL26Z64__ || defined __MK64FX512__ || defined __MK66FX1M0__
-#define LOW_POWER_PERIOD 60
+#define LOW_POWER_PERIOD 1
 #include <Snooze.h>
 SnoozeTimer timer;
 SnoozeBlock sleep_config(timer);
@@ -250,6 +267,9 @@ char *ftoa(char *a, double f, int precision)
 
 void setup()
 {
+
+pinMode(LED,OUTPUT);
+dht.begin();
 #if defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU || defined ESP8266
   //uncomment to disable WiFi on the ESP8266 boards
   //will save about 50mA
@@ -540,36 +560,113 @@ void loop(void)
   long endSend;
   int e;
   float temp;
+  float humidity;
 
-#ifndef LOW_POWER
+  counts = analogRead(A1);
+  Serial.print("\n");
+  Serial.println(counts);
+  //Calculating the accurate voltage
+  mv = counts * 4.63 / 1023;
+  //Mapping the voltage to accurate battery percentage
+  perc = mapb(mv, 3.6, 4.2, 0, 100);
+  Serial.print("Voltage= ");
+  Serial.println(mv);
+  Serial.print("Battery level= ");
+  Serial.print(perc);
+  Serial.println(" %");
+  
+  //get the temp in celcius (default)
+  temp = dht.readTemperature();
+  humidity = dht.readHumidity();
+  //reading the analog value from pin A0
+  light = analogRead(A0);
+  //printing the analog values on the serial monitor
+  Serial.println(light);
+  //Checking day and night
+  if (light > 150)
+  {
+    Serial.println("Day");
+  }
+  else
+  {
+    Serial.println("Night");
+    Serial.print("Distance is:");
+    Serial.println(sonar.ping_cm()); 
+
+    //duration = pulseIn(11, HIGH);
+    duration = sonar.ping();
+    Serial.print("Duration = ");
+    Serial.println(duration);
+   
+  
+    //calculate the speed of sound based on value from temp sensor
+    c = 331.4 + temp * 0.606 + humidity * 0.0124;
+    c = c * 100 * 0.000001;
+    //calculate the distance from duration and speed of sound
+    distance = c * (duration/2) ;
+  
+    Serial.print("Temperature = ");
+    Serial.print(temp);
+    Serial.println(" Deg C  ");
+
+    Serial.print("Humidity = ");
+    Serial.println(humidity);
+    
+    Serial.print("Speed of sound = ");
+    Serial.println(c);
+    
+    Serial.print("Distance = ");
+    Serial.println(distance);
+
+    //Turn on the light if distance is less than 4 cm and greater than 0 cm, if greater than that keep it off. 
+      if (distance > 0 && distance < 4)
+      { 
+        digitalWrite(LED,HIGH);
+        Serial.println("LED on");
+      }
+  
+      else 
+      {
+        digitalWrite(LED,LOW);
+        Serial.println("LED off");
+      }
+  
+  }
+  delay(2000);
+
+//#ifndef LOW_POWER
   // 600000+random(15,60)*1000
   if (millis() > nextTransmissionTime) {
-#endif
+//#endif
 
-#ifdef LOW_POWER
+/*#ifdef LOW_POWER
       digitalWrite(PIN_POWER,HIGH);
       // security?
       delay(200);   
-#endif
+#endif*/
+//Reading the voltage of battery 
+  
 
-      temp = 0.0;
-      
-      for (int i=0; i<5; i++) {
-          temp += sensor_getValue();  
-          delay(100);
-      }
-      
-#ifdef LOW_POWER
-      digitalWrite(PIN_POWER,LOW);
-#endif
+//      temp = 0.0;
+//      
+//      for (int i=0; i<5; i++) {
+//          temp += sensor_getValue();  
+//          delay(100);
+//      }
 
-      PRINT_CSTSTR("Mean temp is ");
-      temp = temp/5;
-      PRINT_VALUE("%f", temp);
-      PRINTLN;
+
+      
+//#ifdef LOW_POWER
+//      digitalWrite(PIN_POWER,LOW);
+//#endif
+
+//      PRINT_CSTSTR("Mean temp is ");
+//      temp = temp/5;
+//      PRINT_VALUE("%f", temp);
+//      PRINTLN;
 
       // for testing, uncomment if you just want to test, without a real temp sensor plugged
-      temp = 20.5;
+      //temp = 20.5;
       
       uint8_t r_size;
       
@@ -577,12 +674,16 @@ void loop(void)
 #ifdef STRING_LIB
       r_size=sprintf((char*)message,"\\!%s/%s",nomenclature_str,String(temp).c_str());
 #else
-      char float_str[10];
+      char float_temp[10];
+      char float_hum[10];
+      char float_battery[10];
       //ftoa: 12146 Bytes, dtostrf: 13442 Bytes, STRING_LIB: 14504 Bytes 
       //dtostrf takes about 1300 byte of program space more than our ftoa() procedure
       //dtostrf((float)temp, 4, 2, float_str);
-      ftoa(float_str,temp,2);
-      r_size=sprintf((char*)message,"\\!%s/%s",nomenclature_str,float_str);
+      ftoa(float_temp,temp,2);
+      ftoa(float_hum,humidity,2);
+      ftoa(float_battery,perc,2);
+      r_size=sprintf((char*)message,"\\!%s/%s/%s/%s/%s/%s","TC",float_temp,"HUM",float_hum,"BP",float_battery);
 #endif
 
       PRINT_CSTSTR("Sending ");
@@ -655,7 +756,7 @@ void loop(void)
       PRINT_CSTSTR("LoRa Sent in ");
       PRINT_VALUE("%ld", endSend-startSend);
       PRINTLN;
-  
+/*  
 #if defined LOW_POWER && not defined ARDUINO_SAM_DUE
       PRINT_CSTSTR("Switch to power saving mode\n");
 
@@ -722,9 +823,9 @@ void loop(void)
           FLUSHOUTPUT;
           delay(1);                        
       }
-#endif      
+#endif*/      
       
-#else
+//#else
       PRINT_VALUE("%ld", nextTransmissionTime);
       PRINTLN;
       PRINT_CSTSTR("Will send next value at\n");
@@ -732,8 +833,12 @@ void loop(void)
       nextTransmissionTime=millis()+(unsigned long)idlePeriodInMin*60*1000; //+(unsigned long)random(15,60)*1000;
       PRINT_VALUE("%ld", nextTransmissionTime);
       PRINTLN;
-  }
-#endif
+}
+//#endif
 
   LT.wake();
+}
+float mapb(float x, float in_min, float in_max, float out_min, float out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
