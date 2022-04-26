@@ -1,31 +1,4 @@
-/*
- *  Fully operational temperature sensor on analog A0 to test the LoRa gateway
- *
- *  Copyright (C) 2016-2020 Congduc Pham, University of Pau, France
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
 
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with the program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *****************************************************************************
- * last update: November 12th, 2020 by C. Pham
- * 
- * NEW: LoRa communicain library moved from Libelium's lib to StuartProject's lib
- * https://github.com/StuartsProjects/SX12XX-LoRa
- * to support SX126X, SX127X and SX128X chips (SX128X is LoRa in 2.4GHz band)
- * 
- * This version uses the same structure than the Arduino_LoRa_Demo_Sensor where
- * the sensor-related code is in a separate file
- */
 
 #include <SPI.h> 
 //this is the standard behaviour of library, use SPI Transaction switching
@@ -37,19 +10,9 @@
 //#define SX128X
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef SX126X
-#include <SX126XLT.h>                                          
-#include "SX126X_RadioSettings.h"
-#endif
-
 #ifdef SX127X
 #include <SX127XLT.h>                                          
 #include "SX127X_RadioSettings.h"
-#endif
-
-#ifdef SX128X
-#include <SX128XLT.h>                                          
-#include "SX128X_RadioSettings.h"
 #endif
 
 #include <NewPing.h>
@@ -71,17 +34,6 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 #include "my_temp_sensor_code.h"
 
-// http://patorjk.com/software/taag
-/********************************************************************
- _____              __ _                       _   _             
-/  __ \            / _(_)                     | | (_)            
-| /  \/ ___  _ __ | |_ _  __ _ _   _ _ __ __ _| |_ _  ___  _ __  
-| |    / _ \| '_ \|  _| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \ 
-| \__/\ (_) | | | | | | | (_| | |_| | | | (_| | |_| | (_) | | | |
- \____/\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
-                          __/ |                                  
-                         |___/                                   
-********************************************************************/
 
 #if defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU || defined ESP8266
 //uncomment if you want to disable WiFi on ESP8266 boards
@@ -89,8 +41,6 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 #endif
 
 ///////////////////////////////////////////////////////////////////
-// COMMENT OR UNCOMMENT TO CHANGE FEATURES. 
-// ONLY IF YOU KNOW WHAT YOU ARE DOING!!! OTHERWISE LEAVE AS IT IS
 //#define WITH_EEPROM
 //if you are low on program memory, comment STRING_LIB to save about 2K
 //#define STRING_LIB
@@ -135,17 +85,11 @@ uint8_t message[100];
 //create a library class instance called LT
 //to handle LoRa radio communications
 
-#ifdef SX126X
-SX126XLT LT;
-#endif
 
 #ifdef SX127X
 SX127XLT LT;
 #endif
 
-#ifdef SX128X
-SX128XLT LT;
-#endif
 
 //keep track of the number of successful transmissions
 uint32_t TXPacketCount=0;
@@ -396,10 +340,6 @@ dht.begin();
     while (1){ }
   }
 
-/*******************************************************************************************************
-  Based from SX12XX example - Stuart Robinson 
-*******************************************************************************************************/
-
   //The function call list below shows the complete setup for the LoRa device using the
   // information defined in the Settings.h file.
   //The 'Setup LoRa device' list below can be replaced with a single function call;
@@ -491,10 +431,6 @@ dht.begin();
   LT.printRegisters(0x900, 0x9FF);
 #endif  
     
-/*******************************************************************************************************
-  End from SX12XX example - Stuart Robinson 
-*******************************************************************************************************/
-
 #ifdef WITH_EEPROM
 #if defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU
   EEPROM.begin(512);
