@@ -579,6 +579,13 @@ void loop(void)
   //get the temp in celcius (default)
   temp = dht.readTemperature();
   humidity = dht.readHumidity();
+  Serial.print("Temperature = ");
+    Serial.print(temp);
+    Serial.println(" Deg C  ");
+
+    Serial.print("Humidity = ");
+    Serial.println(humidity);
+    
   //reading the analog value from pin A0
   light = analogRead(A0);
   //printing the analog values on the serial monitor
@@ -587,6 +594,7 @@ void loop(void)
   if (light > 150)
   {
     Serial.println("Day");
+    digitalWrite(LED,LOW);
   }
   else
   {
@@ -606,12 +614,6 @@ void loop(void)
     //calculate the distance from duration and speed of sound
     distance = c * (duration/2) ;
   
-    Serial.print("Temperature = ");
-    Serial.print(temp);
-    Serial.println(" Deg C  ");
-
-    Serial.print("Humidity = ");
-    Serial.println(humidity);
     
     Serial.print("Speed of sound = ");
     Serial.println(c);
@@ -619,8 +621,8 @@ void loop(void)
     Serial.print("Distance = ");
     Serial.println(distance);
 
-    //Turn on the light if distance is less than 4 cm and greater than 0 cm, if greater than that keep it off. 
-      if (distance > 0 && distance < 4)
+    //Turn on the light if distance is less than 8 cm and greater than 0 cm, if greater than that keep it off. 
+      if (distance > 0 && distance < 8)
       { 
         digitalWrite(LED,HIGH);
         Serial.println("LED on");
