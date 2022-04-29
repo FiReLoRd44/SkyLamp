@@ -44,9 +44,7 @@ const uint8_t Optimisation = LDRO_AUTO;         //low data rate optimisation set
 // set to 1 if your radio is an HopeRF RFM92W, HopeRF RFM95W, Modtronix inAir9B, NiceRF1276
 // or you known from the circuit diagram that output use the PABOOST line instead of the RFO line
 const uint8_t PA_BOOST = 1;
-/*******************************************************************************************************
-  End from SX12XX example - Stuart Robinson 
-*******************************************************************************************************/
+
 
 // IMPORTANT SETTINGS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +83,7 @@ const uint8_t PA_BOOST = 1;
 #endif
 
 //FREQUENCY CHANNELS:
-// added by C. Pham for Senegal
+
 const uint32_t CH_04_868 = 863200000;
 const uint32_t CH_05_868 = 863500000;
 const uint32_t CH_06_868 = 863800000;
@@ -102,7 +100,7 @@ const uint32_t CH_15_868 = 866700000;
 const uint32_t CH_16_868 = 867000000;
 const uint32_t CH_17_868 = 868000000;
 
-// added by C. Pham
+
 const uint32_t CH_18_868 = 868100000; 
 // end
 const uint32_t CH_00_900 = 903080000;
@@ -119,7 +117,7 @@ const uint32_t CH_10_900 = 924680000;
 const uint32_t CH_11_900 = 926840000;
 const uint32_t CH_12_900 = 915000000;
 
-// added by C. Pham
+
 const uint32_t CH_00_433 = 433300000;
 const uint32_t CH_01_433 = 433600000;
 const uint32_t CH_02_433 = 433900000;
