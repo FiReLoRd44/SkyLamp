@@ -32,7 +32,7 @@ DHT dht(dhtPin, DHTTYPE);
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
-#include "my_temp_sensor_code.h"
+
 
 
 #if defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU || defined ESP8266
@@ -212,40 +212,16 @@ char *ftoa(char *a, double f, int precision)
 void setup()
 {
 
-pinMode(LED,OUTPUT);
-dht.begin();
-#if defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU || defined ESP8266
-  //uncomment to disable WiFi on the ESP8266 boards
-  //will save about 50mA
-  //WiFi.disconnect();
-  //WiFi.mode(WIFI_OFF);
-  //WiFi.forceSleepBegin();
-  //delay(1);
-#endif
-  
-  // initialization of the temperature sensor
-  sensor_Init();
-
-#ifdef LOW_POWER
-#ifdef __SAMD21G18A__
-  rtc.begin();
-#endif  
-#else
-  digitalWrite(PIN_POWER,HIGH);
-#endif
+  pinMode(LED,OUTPUT);
+  dht.begin();
 
   delay(3000);
   // Open serial communications and wait for port to open:
-#if defined __SAMD21G18A__ && not defined ARDUINO_SAMD_FEATHER_M0 
-  SerialUSB.begin(38400);
-#else
-  Serial.begin(38400);  
-#endif
-  
+  Serial.begin(38400);
   randomSeed(analogRead(0)+analogRead(0)+analogRead(0));
       
   // Print a start message
-  PRINT_CSTSTR("Simple LoRa temperature sensor\n");
+  PRINT_CSTSTR("SkyLamp\n");
 
 #ifdef ARDUINO_AVR_PRO
   PRINT_CSTSTR("Arduino Pro Mini detected\n");  
@@ -497,7 +473,7 @@ void loop(void)
   int e;
   float temp;
   float humidity;
-
+  //reading the voltage of the battery
   counts = analogRead(A1);
   Serial.print("\n");
   Serial.println(counts);
@@ -572,39 +548,9 @@ void loop(void)
   }
   delay(2000);
 
-//#ifndef LOW_POWER
-  // 600000+random(15,60)*1000
+
   if (millis() > nextTransmissionTime) {
-//#endif
 
-/*#ifdef LOW_POWER
-      digitalWrite(PIN_POWER,HIGH);
-      // security?
-      delay(200);   
-#endif*/
-//Reading the voltage of battery 
-  
-
-//      temp = 0.0;
-//      
-//      for (int i=0; i<5; i++) {
-//          temp += sensor_getValue();  
-//          delay(100);
-//      }
-
-
-      
-//#ifdef LOW_POWER
-//      digitalWrite(PIN_POWER,LOW);
-//#endif
-
-//      PRINT_CSTSTR("Mean temp is ");
-//      temp = temp/5;
-//      PRINT_VALUE("%f", temp);
-//      PRINTLN;
-
-      // for testing, uncomment if you just want to test, without a real temp sensor plugged
-      //temp = 20.5;
       
       uint8_t r_size;
       
