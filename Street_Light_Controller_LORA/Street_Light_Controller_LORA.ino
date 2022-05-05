@@ -1,7 +1,10 @@
+
+
 #include <SPI.h> 
 //this is the standard behaviour of library, use SPI Transaction switching
 #define USE_SPI_TRANSACTION 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// please uncomment only 1 choice 
 //#define SX126X
 #define SX127X
 //#define SX128X
@@ -29,6 +32,7 @@ DHT dht(dhtPin, DHTTYPE);
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
+#include "my_temp_sensor_code.h"
 
 
 #if defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU || defined ESP8266
@@ -44,6 +48,8 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 //#define LOW_POWER_HIBERNATE
 //#define WITH_ACK
 //#define LOW_POWER_TEST
+//uncomment to use a customized frequency. TTN plan includes 868.1/868.3/868.5/867.1/867.3/867.5/867.7/867.9 for LoRa
+//#define MY_FREQUENCY 868100000
 //when sending to a LoRaWAN gateway (e.g. running util_pkt_logger) but with no native LoRaWAN format, just to set the correct sync word
 //#define PUBLIC_SYNCWORD
 ///////////////////////////////////////////////////////////////////
@@ -208,6 +214,25 @@ void setup()
 
 pinMode(LED,OUTPUT);
 dht.begin();
+#if defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU || defined ESP8266
+  //uncomment to disable WiFi on the ESP8266 boards
+  //will save about 50mA
+  //WiFi.disconnect();
+  //WiFi.mode(WIFI_OFF);
+  //WiFi.forceSleepBegin();
+  //delay(1);
+#endif
+  
+  // initialization of the temperature sensor
+  sensor_Init();
+
+#ifdef LOW_POWER
+#ifdef __SAMD21G18A__
+  rtc.begin();
+#endif  
+#else
+  digitalWrite(PIN_POWER,HIGH);
+#endif
 
   delay(3000);
   // Open serial communications and wait for port to open:
@@ -268,7 +293,9 @@ dht.begin();
   PRINT_CSTSTR("Heltec WiFi LoRa 32 detected\n");
 #endif
 
-//microcontroller unit detection
+// See http://www.nongnu.org/avr-libc/user-manual/using_tools.html
+// for the list of define from the AVR compiler
+
 #ifdef __AVR_ATmega328P__
   PRINT_CSTSTR("ATmega328P detected\n");
 #endif 
@@ -551,7 +578,9 @@ void loop(void)
       uint8_t r_size;
       
       // the recommended format if now \!TC/22.5
-
+#ifdef STRING_LIB
+      r_size=sprintf((char*)message,"\\!%s/%s",nomenclature_str,String(temp).c_str());
+#else
       char float_temp[10];
       char float_hum[10];
       char float_battery[10];
@@ -562,7 +591,7 @@ void loop(void)
       ftoa(float_hum,humidity,2);
       ftoa(float_battery,perc,2);
       r_size=sprintf((char*)message,"\\!%s/%s/%s/%s/%s/%s","TC",float_temp,"HUM",float_hum,"BP",float_battery);
-
+#endif
 
       PRINT_CSTSTR("Sending ");
       PRINT_STR("%s",(char*)(message));
