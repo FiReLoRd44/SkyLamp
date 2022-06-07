@@ -640,76 +640,8 @@ void loop(void)
       PRINT_CSTSTR("LoRa Sent in ");
       PRINT_VALUE("%ld", endSend-startSend);
       PRINTLN;
-/*  
-#if defined LOW_POWER && not defined ARDUINO_SAM_DUE
-      PRINT_CSTSTR("Switch to power saving mode\n");
 
-      //CONFIGURATION_RETENTION=RETAIN_DATA_RAM on SX128X
-      //parameter is ignored on SX127X
-      LT.setSleep(CONFIGURATION_RETENTION);
-        
-      FLUSHOUTPUT;    
-#ifdef LOW_POWER_TEST
-      delay(10000);
-#else            
-      delay(10);
-#endif
 
-#ifdef __SAMD21G18A__
-      // For Arduino M0 or Zero we use the built-in RTC
-      rtc.setTime(17, 0, 0);
-      rtc.setDate(1, 1, 2000);
-      rtc.setAlarmTime(17, idlePeriodInMin, 0);
-      // for testing with 20s
-      //rtc.setAlarmTime(17, 0, 20);
-      rtc.enableAlarm(rtc.MATCH_HHMMSS);
-      //rtc.attachInterrupt(alarmMatch);
-      rtc.standbyMode();
-      
-      LowPower.standby();
-      
-      PRINT_CSTSTR("SAMD21G18A wakes up from standby\n");      
-      FLUSHOUTPUT;
-#else
-
-#if defined __MK20DX256__ || defined __MKL26Z64__ || defined __MK64FX512__ || defined __MK66FX1M0__
-      // warning, setTimer accepts value from 1ms to 65535ms max
-      // milliseconds      
-      // by default, LOW_POWER_PERIOD is 60s for those microcontrollers      
-      timer.setTimer(LOW_POWER_PERIOD*1000);
-#endif
-
-      nCycle = idlePeriodInMin*60/LOW_POWER_PERIOD;
-                
-      for (uint8_t i=0; i<nCycle; i++) {  
-
-#if defined ARDUINO_AVR_MEGA2560 || defined ARDUINO_AVR_PRO || defined ARDUINO_AVR_NANO || defined ARDUINO_AVR_UNO || defined ARDUINO_AVR_MINI || defined __AVR_ATmega32U4__ 
-          // ATmega2560, ATmega328P, ATmega168, ATmega32U4
-          LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-          
-#elif defined __MK20DX256__ || defined __MKL26Z64__ || defined __MK64FX512__ || defined __MK66FX1M0__
-          // Teensy31/32 & TeensyLC
-#ifdef LOW_POWER_HIBERNATE
-          Snooze.hibernate(sleep_config);
-#else            
-          Snooze.deepSleep(sleep_config);
-#endif
-#elif defined ARDUINO_ESP8266_ESP01 || defined ARDUINO_ESP8266_NODEMCU || defined ESP8266
-          //in microseconds
-          //it is reported that RST pin should be connected to pin 16 to actually reset the board when deepsleep
-          //timer is triggered
-          ESP.deepSleep(LOW_POWER_PERIOD*1000*1000);
-#else
-          // use the delay function
-          delay(LOW_POWER_PERIOD*1000);
-#endif                        
-          PRINT_CSTSTR(".");
-          FLUSHOUTPUT;
-          delay(1);                        
-      }
-#endif*/      
-      
-//#else
       PRINT_VALUE("%ld", nextTransmissionTime);
       PRINTLN;
       PRINT_CSTSTR("Will send next value at\n");
@@ -718,9 +650,9 @@ void loop(void)
       PRINT_VALUE("%ld", nextTransmissionTime);
       PRINTLN;
 }
-//#endif
 
-  LT.wake();
+
+//  LT.wake();
 }
 float mapb(float x, float in_min, float in_max, float out_min, float out_max)
 {
