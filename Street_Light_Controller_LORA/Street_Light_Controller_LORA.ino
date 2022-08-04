@@ -1,5 +1,3 @@
-
-
 #include <SPI.h> 
 //this is the standard behaviour of library, use SPI Transaction switching
 #define USE_SPI_TRANSACTION 
